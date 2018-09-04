@@ -1,0 +1,9 @@
+FROM 172.18.34.10:5000/robotframework:v0.5.2
+MAINTAINER LiBin
+RUN mkdir /box && mkdir /box/home &&mkdir /box/usr
+COPY ./momlib-python/home  /box/home
+copy ./momlib-python/usr   /box/usr
+RUN cp -rf /box/home/* /home && cp -rf /box/usr/* /usr\
+    && rm -rf /box && rm -rf /home/x86rgos
+COPY ./x86rgos /home/x86rgos
+COPY ./site-packages /usr/local/lib/python3.4/site-packages

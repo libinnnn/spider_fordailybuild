@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rgmomd_cfg_file>
+    <db>
+        <dbid>0</dbid>
+        <name>redis_host</name>
+        <node_deploy>box | cm | lc | sub_lc | fe | ms</node_deploy>
+        <vsd_mode>0</vsd_mode>
+        <device_mode>2</device_mode>        
+        <replication_mode>host</replication_mode>
+        <net_support>0</net_support>
+        <logpath>/data/redis</logpath>
+        <cap>save 10 300000</cap>
+    </db>
+    
+    <db>   
+        <dbid>1</dbid>
+        <name>redis_ce_global</name>
+        <!-- box | cm | lc | sub_lc | fe | ms -->
+        <!-- 如果不支持，就填入null | null | null | null | null. 注意空格 -->                
+        <node_deploy>box | cm | null | null | null | null</node_deploy>
+        <!-- 是否在VSD0中部署，0为在vsd0部署，1为在非vsd0部署，2为在vsd0和非vsd0都部署，其余为非法值 -->
+        <vsd_mode>2</vsd_mode>
+        <!-- 是否在vsu模式下部署，0为单机模式部署，1为仅在vsu模式部署，2同时在vsu和单机模式部署，其余为非法值 -->
+        <device_mode>2</device_mode>        
+        <!-- 数据库的复制类型：global为全局，local为本机箱，host为本地，其余为非法值 -->        
+        <replication_mode>host</replication_mode>
+        <!-- 数据库支持的通信协议(0默认都支持本地通信) 1为支持TIPC，2为支持TCPIP，3为二者都支持，(默认都支持本地通信)其余为非法值 -->
+        <net_support>0</net_support>
+        <!-- 数据库的能力配置，可以多个cap -->
+        <cap>save 60 1800000</cap>
+        <!-- 数据库的能力配置，可以多个cap -->
+        <cap>save 10 300000</cap>
+
+    </db>      
+
+    <db>
+        <dbid>2</dbid>
+        <name>redis_ce_fwd_global</name>
+        <node_deploy>box | cm | null | null | null | null</node_deploy>
+        <vsd_mode>2</vsd_mode>
+        <device_mode>2</device_mode>        
+        <replication_mode>host</replication_mode>
+        <net_support>0</net_support>
+        <cap>save 10 300000</cap>
+    </db>	
+    
+    <db>
+        <dbid>3</dbid>
+        <name>redis_de_global</name>
+        <node_deploy>box | cm | lc | null | null | null</node_deploy>
+        <vsd_mode>2</vsd_mode>
+        <device_mode>2</device_mode>        
+        <replication_mode>host</replication_mode>
+        <net_support>0</net_support>
+        <cap>save 10 300000</cap>
+    </db>
+
+    <db>
+        <dbid>4</dbid>
+        <name>redis_de_fwd_global</name>
+        <node_deploy>box | cm | lc | null | null | null</node_deploy>
+        <vsd_mode>2</vsd_mode>
+        <device_mode>2</device_mode>        
+        <replication_mode>host</replication_mode>
+        <net_support>0</net_support>
+        <cap>save 10 300000</cap>
+    </db>
+	
+    <db>
+        <dbid>5</dbid>
+        <name>redis_monitor_global</name>
+        <node_deploy>box | cm | null | null | null | null</node_deploy>
+        <vsd_mode>2</vsd_mode>
+        <device_mode>2</device_mode>        
+        <replication_mode>host</replication_mode>
+        <net_support>0</net_support>
+        <cap>save 10 300000</cap>
+    </db>
+
+    <db>
+        <dbid>6</dbid>
+        <name>redis_de_standalone</name>
+        <node_deploy>box | cm | lc | null | fe | null</node_deploy>
+        <vsd_mode>0</vsd_mode>
+        <device_mode>2</device_mode>        
+        <replication_mode>host</replication_mode>
+        <net_support>0</net_support>
+        <cap>save 10 300000</cap>
+    </db>
+
+    <db>
+        <dbid>7</dbid>
+        <name>redis_host_fwd</name>
+        <node_deploy>box | null | lc | null | null | null</node_deploy>
+        <vsd_mode>0</vsd_mode>
+        <device_mode>2</device_mode>        
+        <replication_mode>host</replication_mode>
+        <net_support>0</net_support>
+        <cap>save 10 300000</cap>
+    </db>
+	
+    <db>
+        <dbid>8</dbid>
+        <name>redis_ms_global</name>
+        <node_deploy>box | cm | null | null | null | ms</node_deploy>
+        <vsd_mode>2</vsd_mode>
+        <device_mode>2</device_mode>        
+        <replication_mode>host</replication_mode>
+        <net_support>0</net_support>
+        <cap>save 10 300000</cap>
+    </db>
+	
+    <db>
+        <dbid>9</dbid>
+        <name>redis_ms_fwd_global</name>
+        <node_deploy>box | cm | null | null | null | ms</node_deploy>
+        <vsd_mode>2</vsd_mode>
+        <device_mode>2</device_mode>        
+        <replication_mode>host</replication_mode>
+        <net_support>0</net_support>
+        <cap>save 10 300000</cap>
+    </db>	
+
+    <db>
+        <dbid>10</dbid>
+        <name>redis_cfg_global</name>
+        <node_deploy>box | cm | null | null | null | null</node_deploy>
+        <vsd_mode>2</vsd_mode>
+        <device_mode>2</device_mode>        
+        <replication_mode>host</replication_mode>
+        <net_support>0</net_support>
+        <cap>save 10 300000</cap>
+    </db>
+
+    <db>
+        <dbid>11</dbid>
+        <name>redis_cfg_cp</name>
+        <node_deploy>box | cm | null | null | null | null</node_deploy>
+        <vsd_mode>2</vsd_mode>
+        <device_mode>2</device_mode>        
+        <replication_mode>host</replication_mode>
+        <net_support>0</net_support>
+        <cap>save 10 300000</cap>
+    </db>
+	
+	<db>
+        <dbid>12</dbid>
+        <name>redis_ibc_global</name>
+        <node_deploy>box | cm | lc | null | fe | null</node_deploy>
+        <vsd_mode>0</vsd_mode>
+        <device_mode>2</device_mode>        
+        <replication_mode>host</replication_mode>
+        <net_support>0</net_support>
+        <cap>save 10 300000</cap>
+    </db>	
+	
+    <db>
+        <dbid>13</dbid>
+        <name>redis_cap</name>
+        <node_deploy>box | cm | null | null | null | null</node_deploy>
+        <vsd_mode>0</vsd_mode>
+        <device_mode>2</device_mode>        
+        <replication_mode>host</replication_mode>
+        <net_support>0</net_support>
+        <cap>save 10 300000</cap>
+    </db>
+    
+    <db>
+        <dbid>14</dbid>
+        <name>redis_cfg_can</name>
+        <node_deploy>box | cm | null | null | null | null</node_deploy>
+        <vsd_mode>2</vsd_mode>
+        <device_mode>2</device_mode>        
+        <replication_mode>host</replication_mode>
+        <net_support>0</net_support>
+        <cap>save 10 300000</cap>
+    </db>    
+</rgmomd_cfg_file>

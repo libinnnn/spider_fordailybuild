@@ -1,0 +1,2 @@
+/* dcm depend ham.  */
+GROUP ( -lpsh_essence -lpthread -lrt -lrg-thread -lrg_syslog -lrg_proc_ham -lras_common -lpsh_common )

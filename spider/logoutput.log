@@ -1,0 +1,12 @@
+2018-09-04 Tuesday 17:53:50  connectionpool.py : DEBUG  Starting new HTTPS connection (1): sso.ruijie.net:8443
+2018-09-04 Tuesday 17:53:50  connectionpool.py : DEBUG  https://sso.ruijie.net:8443 "GET /cas/login?service=http%3A%2F%2Fbuild.ruijie.net%3A8080%2Fngcf_build%2Fservlet%2FdailyBuildMain HTTP/1.1" 200 6115
+2018-09-04 Tuesday 17:53:50  connectionpool.py : DEBUG  Starting new HTTPS connection (1): sso.ruijie.net:8443
+2018-09-04 Tuesday 17:53:50  connectionpool.py : DEBUG  https://sso.ruijie.net:8443 "POST /cas/login?service=http%3A%2F%2Fbuild.ruijie.net%3A8080%2Fngcf_build%2Fservlet%2FdailyBuildMain HTTP/1.1" 302 0
+2018-09-04 Tuesday 17:53:50  connectionpool.py : DEBUG  Starting new HTTP connection (1): build.ruijie.net:8080
+2018-09-04 Tuesday 17:53:50  connectionpool.py : DEBUG  http://build.ruijie.net:8080 "GET /ngcf_build/servlet/dailyBuildMain?ticket=ST-62419-RAszHpmVwJnvZIJaNWuS-cas HTTP/1.1" 302 0
+2018-09-04 Tuesday 17:53:50  connectionpool.py : DEBUG  http://build.ruijie.net:8080 "GET /ngcf_build/servlet/dailyBuildMain;jsessionid=AD3868EC3E523D4DE99A45400393D73F HTTP/1.1" 200 2297
+2018-09-04 Tuesday 17:53:50  connectionpool.py : DEBUG  http://build.ruijie.net:8080 "GET /ngcf_build/servlet/dailyBuildMain;jsessionid=AD3868EC3E523D4DE99A45400393D73F HTTP/1.1" 200 2297
+2018-09-04 Tuesday 17:53:50  connectionpool.py : DEBUG  http://build.ruijie.net:8080 "POST /ngcf_build/servlet/dailyBuild HTTP/1.1" 200 755
+2018-09-04 Tuesday 17:53:50  connectionpool.py : DEBUG  Starting new HTTP connection (1): 192.168.5.179:80
+2018-09-04 Tuesday 17:53:50  connectionpool.py : DEBUG  http://192.168.5.179:80 "GET /ngcf/output/git-rgosm-project/org_rgos/rgos_x86_0_A_id20180904000008-%5bdef%5d/rgos_info/rootfs/version HTTP/1.1" 200 21549
+2018-09-04 Tuesday 17:53:50  spider_tools.py : INFO  update mom and rf

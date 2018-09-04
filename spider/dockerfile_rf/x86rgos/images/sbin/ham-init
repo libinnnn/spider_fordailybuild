@@ -1,0 +1,29 @@
+#!/bin/sh
+
+mkdir -p /data/var/run/vsd/
+chmod 777 /data/var/run/vsd/
+mkdir -p /data/.rgos/vsd_common/
+chmod 777 /data/.rgos/vsd_common/
+mkdir -p /data/.rgos/vsd/0/
+chmod 777 /data/.rgos/vsd/0/
+mkdir -p /rg_cfg/vsd_common/
+chmod 777 /rg_cfg/vsd_common/
+mkdir -p /rg_cfg/vsd/0
+chmod 777 /rg_cfg/vsd/0
+mkdir -p /rgos/vsd_common/
+chmod 777 /rgos/vsd_common/
+mkdir -p /rgos/vsd/0
+chmod 777 /rgos/vsd/0
+mkdir -p /tmp/vsd_common/
+chmod 777 /tmp/vsd_common/
+mkdir -p /tmp/vsd/0
+chmod 777 /tmp/vsd/0
+mkdir -p /etc/vsd/0
+chmod 777 /etc/vsd/0
+DATA2="/data2/"
+if [ -d "$DATA2" ]; then
+mkdir -p /data2/var/run/vsd/
+chmod 777 /data2/var/run/vsd/
+mkdir -p /data2/.rgos/vsd/0/
+chmod 777 /data2/.rgos/vsd/0/
+fi

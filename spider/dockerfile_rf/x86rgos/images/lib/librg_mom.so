@@ -1,0 +1,2 @@
+/* rg_mom_impl depend zlog.  */
+GROUP ( -lrg_mom_impl -lzct -lzformat -lzlog -lprotobuf-c -ljson-c)

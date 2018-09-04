@@ -1,0 +1,12 @@
+export IMAGES=${PWD}/images
+export INSTALL_SODIR=lib
+export PRJ_HOME=${PWD}
+export ARCH=x86
+export VSDID=0
+export VSD_HOME=/data/var/run/vsd
+export DATA_RGOS_DIR=/data/.rgos/vsd/0
+export DATA_RGOS_DIR_COMMON=/data/.rgos/vsd_common
+export RGOS_DIR=/rgos/vsd/0
+export RGOS_DIR_COMMON=/rgos/vsd_common
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${IMAGES}/lib:${IMAGES}/lib/lua:${IMAGES}/lib/python
+export PATH=${IMAGES}/sbin:$PATH

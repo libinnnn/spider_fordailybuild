@@ -1,0 +1,64 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/
+#
+# Description :
+#
+# Authors     :
+#
+# Version     : 00.00
+#
+# Notes       :
+#
+########################################################################
+
+#. /etc/sysconfig/rc
+#. ${rc_functions}
+
+PROG=mom
+
+case "${1}" in
+	start)
+		echo "copy redis_host.rdb ..."
+		mkdir -p /tmp/redis
+        cp -af ${PWD}/mom/redis_host.rdb /tmp/redis/
+		echo "Starting rgmomd..."
+        rgmomd &
+        #evaluate_retval
+		#loadproc ${PROG}
+		;;
+	vsd)
+		echo "Starting VSD ${PROG}..."
+		rgmomd &
+		;;
+
+	stop)
+		echo "Stopping ${PROG}..."
+		#ps -ef |grep -w '${PROG}'|grep -v grep|cut -c 9-15|xargs kill -9
+		pkill -9  rgmomd
+		pkill -9  redis		
+		echo "Stoped ${PROG}..."
+		;;
+
+	reload)
+		echo "Reloading ${PROG}..."
+		#reloadproc ${PROG}
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc ${PROG}
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|reload|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/

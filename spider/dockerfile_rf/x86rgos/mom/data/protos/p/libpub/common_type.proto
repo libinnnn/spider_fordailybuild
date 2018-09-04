@@ -1,0 +1,28 @@
+syntax = "proto3";
+package p_libpub;
+
+/*
+ * mac长度为6
+ */
+message mac {
+    bytes data = 1;
+}
+
+message ipv4 {
+    uint32 data = 1;
+}
+
+/*
+ * ipv6长度为16
+ */
+message ipv6 {
+    bytes data = 1;
+}
+
+message ip{ 
+    oneof ipaddr {
+        ipv4 v4 = 1;
+        ipv6 v6 = 2;
+    }
+}
+

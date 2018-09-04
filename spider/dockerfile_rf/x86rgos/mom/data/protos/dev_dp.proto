@@ -1,0 +1,455 @@
+/**
+ * device probe protocol 
+ */
+syntax = "proto3";
+
+package p_dev;
+
+/**
+ * 交换机工作模式
+ */
+enum vsu_cfg_mode_e {                                   
+    SWITCH_MODE_STANDALONE = 0; /* 单机模式 */ 
+    SWITCH_MODE_VIRTUAL = 1;    /* VSU模式 */
+    SWITCH_MODE_NOT_INIT = 2;   /* 未确定模式 */
+}
+
+/**
+ * 板卡节点类型
+ */
+enum dm_node_type_e {
+    DM_TYPE_UNKNOWN = 0;    /* 类型未知 */
+    DM_TYPE_BOX = 1;        /* 盒式设备 */
+    DM_TYPE_MB = 2;         /* 管理引擎 */
+    DM_TYPE_LC = 3;         /* 普通线卡，或路由载板*/
+    DM_TYPE_SUB_LC = 4;     /* 子卡 */
+    DM_TYPE_SFC = 5;        /* 交换网板，SFC: switch fabric card */
+    DM_TYPE_MSC = 6;        /* 多业务卡 */
+}
+
+/**
+ * 板卡角色
+ */
+enum dm_role_e {
+    DM_ROLE_NONE = 0;       /* 全局角色未确定 或 本地角色未定 */
+    DM_ROLE_MASTER = 1;     /* 全局主角色 或 本地主角色 */
+    DM_ROLE_SLAVE = 2;      /* 全局从角色 或 者本地从角色 */
+    DM_ROLE_CANDIDATE = 3;  /* 全局候选角色 */
+}
+
+/**
+ * 槽位类型
+ */
+enum dm_slot_type_e {
+    SLOT_ENGINE = 0;                    /* 管理板槽位 */
+    SLOT_FE = 1;                        /* 交换板槽位 */
+    SLOT_CARD = 2;                      /* 线卡或扩展卡槽位 */
+    SLOT_SUB = 3;                       /* 子卡槽位 */
+    SLOT_NON_INTLG = 4;                 /* 非智能槽位 */
+    SLOT_SUB_NON_INTLG = 5;             /* 子卡非智能槽位 */
+    SLOT_VOLAITILE_CARD = 6;            /* 线卡槽位，根据线卡类型决定是否使能此槽位 */
+    SLOT_VOLAITILE_SUB_NON_INTLG = 7;   /* 非智能子卡，根据子卡类型决定是否使能此槽位 */
+    SLOT_INVALID = 8;                   /* 无效槽位 */
+}
+
+/**
+ * 预通告类型
+ */
+enum pre_event_type {
+    DP_LIB_MSG_HPG_FAST_NOTIFY_IN_LC = 0;   /* 板卡快速通告，在线卡上发出，由中断直接触发 */
+    DP_LIB_MSG_HPG_FAST_NOTIFY_IN_LC_FM = 1;/* 板卡快速通告，在线卡上发出，中断在MB上触发，从MB转发到LC */
+    DP_LIB_MSG_PRE_REMOVE = 2;          /* 板卡拔出预处理 */
+    DP_LIB_MSG_PRE_INSTALL = 3;         /* 预安装判断消息 */
+    DP_LIB_MSG_HPG_FAST_DEVICE_REMOVE = 4;  /* 机箱拔出快速通告 */
+}
+
+/**
+ * 复位请求类型
+ */
+enum reset_event_type {
+    DP_LIB_RESET_SELF = 0;          /* 复位本卡 */
+    DP_LIB_RESET_CARD = 1;          /* 复位全局某板卡 */
+    DP_LIB_RESET_DEVICE = 2;        /* 复位机箱 */
+    DP_LIB_RESET_ALL = 3;           /* 复位所有机箱 */
+    DP_LIB_MSG_SELF_HEALING = 4;    /* 本地机箱线卡自愈 */
+}
+
+/**
+ * led点灯的操作类型
+ */
+enum dm_slot_led_e {
+    DM_SLOT_LED_DARK = 0;
+    DM_SLOT_LED_GREEN = 1;
+    DM_SLOT_LED_RED = 2;
+    DM_SLOT_LED_YELLOW = 3;
+    DM_SLOT_LED_SPARK = 4;
+    DM_SLOT_LED_FSPARK_OPEN = 5;
+    DM_SLOT_LED_FSPARK_CLOSE = 6;
+}
+
+/**
+ * 普通led灯的led灯类型
+ */
+enum dm_led_type_e {
+    DM_LED_TP_STATUS = 0;       /* 状态灯 */
+    DM_LED_TP_PRIMARY = 1;      /* primary灯 */
+    DM_LED_TP_ALARM = 2;        /* alarm灯 */
+    DM_LED_TP_FE = 3;           /* FE灯 */
+    DM_LED_TP_FAN = 4;          /* 风扇灯 */
+    DM_LED_TP_PWR = 5;          /* 电源灯 */
+    DM_LED_TP_LC_STATUS = 6;    /* 线卡上的状态灯 */
+    DM_LED_TP_FE_OFFLINE = 7;   /* FE卡离线灯 */
+    DM_LED_TP_MOD = 8;          /* 预留 */
+    DM_LED_TP_FAN_IN_FAN = 9;   /* 在风扇上的led灯 */
+    DM_LED_TP_MOD_IN_MOD = 10;  /* 在扩展卡上的led */
+    DM_LED_TP_LOCATION = 11;    /* 设备查找定位灯 */
+}
+
+/* alarm灯专用的操作类型 */
+enum dm_alarm_stat {
+    DM_ALARM_RESERVE = 0;      /* 预留 */
+    DM_ALARM_YELLOW = 1;       /* 点黄灯 */
+    DM_ALARM_RED = 2;          /* 点红灯 */
+}
+
+/**
+ * 本卡自身信息
+ * %n RG_MOM_TUNNER_DB
+ * %t hash
+ */
+message dp_lib_my_info {
+    reserved 1 to 4;
+    dm_node_type_e dm_my_node_type = 5;    /* 本节点类型 */
+    int32 slotid = 6;                      /* %r [0, 31] 本节点槽位号 */
+    int32 sslotid = 7;                     /* %r [0, 6] 本节点子槽号 */
+    int32 cpu_num = 8;                     /* 本节点的cpu数目 */
+    int32 local_peer_slotid = 9;           /* %r [0, 31] 本地对端管理板节点的槽位号 */
+    int32 card_type = 10;                  /* 本节点物理类型（每个硬件有独立编号） */
+    int32 cpuid = 11;                      /* 本节点的cpudid */
+    bytes prod_serial    = 12;             /* 本板卡的产品系列号，例如[4.0.0.0] */
+    bytes my_card_mac_addr = 13;           /* 本卡mac地址 */
+    int32 card_nodeid = 14;               /* 本卡的全局唯一标示id，未确定时值为-1 */
+}
+
+/**
+ * 本卡所在机箱的信息及本卡在机箱中显示的信息
+ * %n RG_MOM_TUNNER_DB
+ * %t hash
+ */
+message dp_lib_my_chss_info {
+    reserved 1 to 4;
+    vsu_cfg_mode_e device_mode = 5;        /* 本机箱运行模式 */
+    int32 devid = 6;                       /* 本机箱devid */
+    int32 domain_id = 7;                   /* 本机箱domain id */
+    int32 dev_type = 8;                    /* 本机箱所属的设备类型 */
+    string dev_desc = 9;                   /* 本机箱描述信息 */
+    bytes local_chassis_mac_addr = 10;     /* 本机箱使用的mac地址（双管理板选举出） */
+    int32 user_slotid = 11;                /* %r [0, 31] 本卡在机箱中显示的用户槽位号 */
+    int32 user_sslotid = 12;               /* %r [0, 6] 本卡在机箱中显示的用户子槽号 */
+    string my_card_uslot_name = 13;        /* 本卡在机箱中显示的名称 例如 M1 M2 ;FEx ; x */
+}
+
+/**
+ * 本地角色信息
+ * %n RG_MOM_TUNNER_DB
+ * %t hash
+ */
+message dp_lib_lrole {
+    reserved 1 to 4;
+    dm_role_e my_lrole = 5;                /* 板卡的本地角色 */
+    int32 local_master_slotid = 6;         /* %r [0, 31] 本地主管理板槽位号 */
+    int32 local_slave_slotid = 7;          /* %r [0, 31] 本地从管理板槽位号 */
+}
+
+/* 板卡索引 */
+message card_info_index {
+    int32 devid = 1;        /* 板卡所属机箱的devid号 */
+    int32 slotid = 2;       /* %r [0, 31] 板卡的槽位号 */
+    int32 sslotid = 3;      /* %r [0, 6] 板卡的子槽位号 */
+}
+
+/**
+ * 全局角色信息
+ * %n RG_MOM_TUNNER_DB
+ * %t hash
+ */
+message dp_lib_grole {
+    reserved 1 to 4;
+    int32 dev_num = 5;                      /* 当前存在的设备数量 */
+    dm_role_e my_grole = 6;                 /* 本板卡的角色 */    
+    card_info_index global_master = 7;      /* 全局主管理板 */
+    card_info_index global_slave = 8;       /* 全局从管理板 */
+    bytes sysmac = 9;                       /* 系统的sysmac地址 */
+    bytes l2_mac = 10;                      /* 系统的l2地址 */
+    bytes l3_mac = 11;                      /* 系统的l3地址 */
+    repeated lib_card_role card_role = 12;  /* 所有已安装管理板的角色信息 */
+}
+
+/* 管理板的角色信息 */
+message lib_card_role {
+    int32 devid = 1;                /* 板卡所属机箱的devid号 */
+    int32 slotid = 2;               /* %r [0, 31] 板卡的槽位号 */
+    int32 sslotid = 3;              /* %r [0, 6] 板卡的子槽位号 */
+    bool is_local_master = 4;       /* 是否本地主管理板 */
+    dm_role_e globe_role = 5;       /* 板卡的全局角色 */
+}
+
+/**
+ * 检测阶段完成标记
+ * %n RG_MOM_TUNNER_DB
+ * %t hash
+ */
+message dp_lib_complete {
+    reserved 1 to 4;
+    bool all_is_complete = 5;            /* 首轮检测是否完成 */
+    bool pre_instl_has_conflict = 6;    /* 预留：首轮检测完成时，在位板卡与预配置文件是否出现冲突    */
+    bool local_mb_is_complete = 7;      /* 预留：本地管理板探测是否完成， 默认是false*/
+    bool local_lc_is_complete = 8;      /* 预留：本地线卡探测是否完成， 默认是false*/    
+    bool global_mb_is_complete = 9;     /* 预留：全局管理板探测是否完成， 默认是false*/
+};
+
+/* 机箱安装信息索引 */
+message device_info_index {
+    int32 devid = 1;    /* 机箱的devid号 */
+}
+
+/* 机箱静态信息索引 */
+message device_static_info_index {
+    int32 type = 1;    /* 机箱硬件类型号 */
+}
+
+/**
+ * 机箱静态信息
+ * %n RG_MOM_TUNNER_DB
+ * %t hash
+ */
+message device_static_info {
+    reserved 1 to 4;
+    device_static_info_index index = 5;              /* 索引key */
+    int32 min_slot = 6;                     /* %r [0, 31] 线卡(含FE卡)最小槽位号 */
+    int32 max_slot = 7;                     /* %r [0, 31] 线卡(含FE卡)最大槽位号 */
+    int32 fan_num = 8;                      /* 风扇槽数目 */
+    int32 power_num = 9;                    /* 电源插槽数目 */
+    int32 poe_power_num = 10;               /* poe电源数量 */
+    string name = 11;                       /* 该设备名称 */
+    repeated int32 slot_index = 12;         /* 用户槽位与物理槽位转换表, phy_slot=slot_index[user_slot] */
+    repeated dm_slot_type_e slot_type = 13; /* 槽位类型 */
+    repeated int32 user_slot_index = 14;    /* 机架式设备 的用户槽位与物理槽位转换表,输入是板卡的槽位号slot,user_slot=user_slot_index[phy_slot] */
+    int32 lc_min_slot = 15;                    /* %r [0, 31] 线卡最小槽位号 */
+    int32 lc_max_slot = 16;                 /* %r [0, 31] 线卡最大槽位号 */
+    int32 fe_min_slot = 17;                 /* %r [0, 31] FE卡最小槽位号 */
+    int32 fe_max_slot = 18;                 /* %r [0, 31] FE卡最大槽位号 */
+    int32 adjust_fan_num = 19;              /* 调速风扇盘数量 */
+    bool is_box = 20;                       /* 是否是盒式设备 */
+    repeated int32 box_user_slot_index = 21;/* 盒式设备 的用户槽位与物理槽位转换表,输入是板卡的子槽号sslot,user_slot=box_user_slot_index[phy_sslot] */
+};
+
+/* 机箱静态信息索引 */
+message card_static_info_index {
+    int32 type = 1;    /* 板卡硬件类型号 */
+}
+
+/**
+ * 板卡静态信息
+ * %n RG_MOM_TUNNER_DB
+ * %t hash
+ */
+message card_static_info {
+    reserved 1 to 4;
+    card_static_info_index index = 5;   /* 索引key */
+    int32 node_type = 6;                /* 节点类型 */
+    int32 sub_slot_num = 7;             /* %r [0, 6] 子槽个数 */
+    string name = 8;                    /* 该板卡名称 */
+}
+
+/**
+ * 已安装的机箱信息：含预安装和实际在位的机箱
+ * %n RG_MOM_TUNNER_DB
+ * %t hash
+ */
+message device_info {
+    reserved 1 to 4;
+    device_info_index index = 5;        /* 索引key */
+    int32 devid = 6;                    /* 机箱的设备号 */
+    device_static_info static_info =7;  /* 机箱的静态信息副本，便于快速查询 */
+    int32 config_dev_type = 8;          /* 设备配置类型 */
+    int32 is_online = 9;                /* 设备在线 */
+    string devname = 10;                /* 机箱描述信息（即名称） */
+    bytes serial = 11;                  /* 机箱系列号, 例如[4.0.0.0] */
+    bytes mac_addr = 12;                /* MAC 地址 */
+    repeated string uslot_names = 13;   /* 用户槽位名称数组，uslot_name=uslot_names[user_slot] */
+};
+
+/**
+ * 已安装的板卡信息：含预安装和实际在位的板卡
+ * %n RG_MOM_TUNNER_DB
+ * %t hash
+ */
+message card_info {
+    reserved 1 to 4;
+    card_info_index index = 5;
+    int32 config_dev_type = 6;         /* 板卡配置类型 */
+    bool is_online = 7;                /* 板卡在线 */
+    int32 cpu_num = 8;                 /* CPU数量 */
+    bool is_mboard = 9;                /* 是否管理板 */
+    int32 sw_status = 11;              /* 板卡软件状态 */
+    string name = 12;                  /* 板卡名称 */
+    bool ex_sw_st_is_cns = 13;         /* 是否被外部设置为cannot startup */
+    card_static_info static_info = 14; /* 板卡的静态信息副本，便于快速查询 */
+    int32 user_slot = 15;              /* 板卡用户槽位号 */
+    int32 user_sslot = 16;             /* 板卡用户子槽号,预留 */
+    int32 card_nodeid = 17;           /* 板卡的全局唯一标示id */
+};
+
+message local_card_info_index {
+    int32 devid = 1;        /* 机箱号 */
+    int32 slotid = 2;       /* 板卡的槽位号 */
+    int32 sslotid = 3;      /* 板卡的子槽位号 */
+}
+
+/**
+ * 板卡在LDP协议中的状态信息
+ * %n RG_MOM_TUNNER_DB
+ * %t hash
+ */
+message local_card_info {
+    reserved 1 to 4;
+    local_card_info_index index = 5;
+    bool ldp_online = 6;         /* 在LDP协议中是否处于online状态 */
+    int32 card_type = 7;         /* 板卡类型，ldp_online为true时有效 */
+}
+
+/**
+ * dp协议功能控制开关
+ * %n RG_MOM_TUNNER_DB
+ * %t hash
+ */
+message dp_func_ctrl {
+    reserved 1 to 4;
+    bool no_fe_startup = 5;                         /* 允许无fe卡启机 */
+    bool no_self_health = 6;                        /* 在线卡探测超时后不执行自恢复 */
+    int32 disable_led_ctrl = 7;                     /* 生测环境中对部分指示灯不再进行操作的位图 */
+    bool disable_card_temp_probe = 8;               /* 不挂载dfd的板卡温度获取函数 */
+    bool ignore_fe_offline_button = 9;              /* 生测下不处理FE卡offline按钮事件 */
+    bool disable_card_temp_thread = 10;              /* 生测下不启动板卡温度监控的轮训线程 */
+    bool disable_card_mon_thread = 11;               /* 生测下不启动板卡监控的轮训线程 */
+    bool disable_device_mon_thread = 12;             /* 生测下不启动机箱监控的轮训线程 */
+    bool disable_mb_probe_thread = 13;               /* 生测下管理板探测线程使能开关 */
+    bool disable_fan_probe_thread = 14;             /* 生测下风扇监测线程使能开关 */
+    bool disable_power_probe_thread = 15;           /* 生测下电源监测线程使能开关 */
+    bool force_fast_boot = 16;                      /* 缩短本地板卡探测超时时间，以实现设备快速启动 */
+};
+
+/**
+ * 设备状态变化的预通告
+ * %n RG_MOM_TUNNER_DB
+ * %t string
+ */
+message dm_pre_notify_info {
+    reserved 1 to 4;
+    pre_event_type event = 5;   /* 预通告事件类型 */
+    int32 devid = 6;            /* 预通设备的机箱号 */
+    int32 slotid = 7;           /* %r [0, 31] 预通设备的槽位号 */
+    int32 sslotid = 8;          /* %r [0, 31] 预通设备的子槽号 */
+    int32 event_flag = 9;       /* 事件标志位 */
+    string event_param = 10;     /* 事件字符串描述 */
+};
+
+/* 复位请求索引 */
+message dm_lib_reset_req_index {
+    string mod_name = 1;            /* 发起请求的模块名，必填 */
+    int32 action = 2;               /* 进行复位操作的类型，必填 reset_event_type类型*/
+    string cause = 3;               /* 复位的原因，必填 */
+    int32 sn = 4;                   /* 模块第几次发起复位请求操作，用于避免同一模块同时进行多个请求导致value被覆盖 */
+}
+
+/**
+ * 复位设备请求
+ * %n RG_MOM_TUNNER_DB
+ * %t string
+ */
+message dm_lib_reset_req {
+    reserved 1 to 4;
+    dm_lib_reset_req_index index = 5;
+    int32 devid = 6;                /* 操作为RESET_CARD或RESET_DEVICE填写 */
+    int32 slotid = 7;               /* 操作为RESET_CARD时填写 */
+    int32 sslotid = 8;              /* 操作为RESET_CARD时填写 */
+    bool immediate = 9;             /* 是否忽略复位等待检查，组件正常使用时写0 */
+    int32 flag = 10;                /* 操作标志位:默认写0 */
+}
+
+/**
+ * 复位设备请求的操作结果
+ * %n RG_MOM_TUNNER_DB
+ * %t string
+ */
+message dm_lib_reset_ack {
+    reserved 1 to 4;
+    dm_lib_reset_req_index index = 5;
+    int32 devid = 6;                /* 复位操作对象的devid */
+    int32 slotid = 7;               /* 复位操作对象的slotid */
+    int32 sslotid = 8;              /* 复位操作对象的sslotid */
+    int32 ret = 9;                  /* 请求成功与失败，dm填写，非零为失败 */
+    string ret_cause = 10;          /* 请求成功与失败原因，dm填写 */
+    int32 flag = 11;                /* 操作标志位 */
+}
+
+/* alarm点灯请求索引 */
+message dm_lib_alarm_led_index {
+    int32 devid = 1;                /* 目标点灯机箱，必填 */
+    string mod_name = 2;            /* 发起请求的模块名，必填 */
+    int32 stat = 3;                 /* 进行操作的类型，必填，参考dm_alarm_stat */
+    int32 cause_id = 4;             /* 点灯的原因id，必填 */
+    string cause_str = 5;           /* 点灯的原因说明字符串，必填 */
+}
+
+/**
+ * alarm点灯请求
+ * %n RG_MOM_TUNNER_DB
+ * %t string
+ */
+message dm_lib_alarm_led {
+    reserved 1 to 4;
+    dm_lib_alarm_led_index index = 5;
+    int32 flag = 6;                 /* 操作标志位:默认写0 */
+}
+
+/* 将板卡设置为无法启动状态的请求索引 */
+message dm_lib_set_card_cns_index {
+    int32 devid = 1;        /* 板卡所属机箱的devid号 */
+    int32 slotid = 2;       /* 板卡的槽位号 */
+    int32 sslotid = 3;      /* 板卡的子槽位号 */
+    string mod_name = 4;    /* 模块自身的组件名称 */
+    string reason = 5;      /* 设置原因 */
+}
+
+/**
+ * 将板卡设置为无法启动状态的请求
+ * %n RG_MOM_TUNNER_DB
+ * %t string
+ */
+message dm_lib_set_card_cns {
+    reserved 1 to 4;
+    dm_lib_set_card_cns_index index = 5;
+    int32 flag = 7;                 /* 操作标志位:默认写0 */
+}
+
+/* 普通类型灯的点灯请求索引 */
+message dm_lib_led_ctrl_index {
+    string mod_name = 1;            /* 发起请求的模块名，必填 */
+    string cause_str = 2;           /* 点灯的原因说明字符串，必填 */
+    int32 led_type = 3;             /* 目标灯的类型，必填，参考dm_led_type_e */
+    int32 led_index = 4;            /* 同类型灯存在多个灯时，填写的序号，默认是0 */
+    int32 stat = 5;                 /* 进行操作的类型，必填，参考dm_slot_led_e */
+}
+
+/**
+ * 普通类型灯的点灯请求
+ * %n RG_MOM_TUNNER_DB
+ * %t string
+ */
+message dm_lib_led_ctrl {
+    reserved 1 to 4;
+    dm_lib_led_ctrl_index index = 5;
+    int32 flag = 6;                 /* 操作标志位:默认写0 */
+}

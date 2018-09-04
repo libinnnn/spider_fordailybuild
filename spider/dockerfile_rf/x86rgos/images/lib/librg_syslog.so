@@ -1,0 +1,1 @@
+GROUP ( -lsyslog_new -lpthread -lrt -lrg_proc_ham )

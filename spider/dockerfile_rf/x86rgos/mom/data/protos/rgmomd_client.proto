@@ -1,0 +1,41 @@
+/**
+ * rgmomd与mom client交互信息
+ */
+syntax = "proto3";
+
+package p_libpub;
+
+/**
+ * message description
+ * %n RG_MOM_RGMOMD_HOST
+ * %t string
+ */
+
+message redis_db_group_info_index {
+    int32 t_vsdid = 1;        /* 所属vsd的vsdid*/
+}
+ 
+message redis_db_group_info {
+    reserved 1 to 4;
+	redis_db_group_info_index index = 5;                
+	repeated redis_db_conn_info my_db_conn_info = 6;    /* 每个vsd下的数据库连接信息 */
+	reserved 7 to 10;  
+}
+
+message redis_db_conn_info {
+	int32 dbid = 1;            /* 数据库id */					         	
+	int32 vsdid = 2;           /* 所属vsd的vsdid */					        
+	string unix_path = 3;	   /* 本地连接信息 */		      
+	int32 read_conn = 4;       /* 读连接。0为不可用，1为本地，2为远程 */				      
+	int32 write_conn = 5;      /* 写连接。0为不可用，1为本地，2为远程 */				      
+	int32 sub_conn = 6;        /* 订阅连接。0为不可用，1为本地，2为远程 */               
+	string tcp_ip = 7;         /* tcp协议ip地址 */				        
+	int32 tcp_port = 8;        /* tcp协议port */				        
+	string tipc_type = 9;      /* tipc协议type */				      
+	int32 tipc_instance = 10;  /* tipc协议instance */		      
+	int32 mst_flag = 11;       /* 数据库主从角色，0为从，1为主 */
+	int32 node_deploy = 12;    /* 数据库部署位置。b'0:box, b'1:mb, b'2:lc。如果部署，按位置1；否则，按位置0 */
+	int32 global_mode = 13;    /* 全局模式。0为全局，1为local，2为本地host */
+	string dbname = 14;        /* 数据库名称 */
+	reserved 15 to 20;  
+}
